@@ -1,0 +1,76 @@
+
+
+    --range-start=PATTERN
+    --range-stop=PATTERN
+    --range-invert
+
+=head1 RANGE SEARCHING
+
+ack's C<--type> searching lets you specify types of files you want to
+search, and you can also specify filenames.  The C<--range-start> and
+C<--range-stop> options let you specify ranges of lines to search within
+each file.
+
+Say you had the following file:
+
+    # This function calls print on "foo".
+    sub foo {
+        print 'foo';
+    }
+    my $print = 1;
+    sub bar {
+        print 'bar';
+    }
+    my $task = 'print';
+
+Say you wanted to search for the string "print", but only if it appears in
+a subroutine.  Simply calling C<ack print> will give us three matches:
+
+    $ ack print testfile
+    # This function calls print on "foo".
+        print 'foo';
+    my $print = 1;
+        print 'bar';
+    my $task = 'print';
+
+We can specify ranges of lines that we want ack to search.  The range starts with any line that matches the
+pattern C<^sub \w+>, and stops with any line that matches C<^}>.
+
+    $ ack --range-start='^sub \w+' --range-stop='^}' print testfile
+        print 'foo';
+        print 'bar';
+
+Note that ack searched two ranges of lines.  The listing below shows which
+lines were in a range and which were out of the range.
+
+    Out # This function calls print on "foo".
+    In  sub foo {
+    In      print 'foo';
+    In  }
+    Out my $print = 1;
+    In  sub bar {
+    In      print 'bar';
+    In  }
+    Out my $task = 'print';
+
+You don't have to specify both C<--range-start> and C<--range-stop>.  IF
+C<--range-start> is omitted, then the range runs from the first line in the
+file unitl the first line that matches C<--range-stop>.  Similarly, if
+C<--range-stop> is omitted, the range runs from the first line matching
+C<--range-start> to the end of the file.
+
+You can also add the C<--range-invert> option to tell ack to search only
+lines that are B<not> in the range.  In our example above, inverting our
+range would give us this result.
+
+    $ ack --range-start='^sub \w+' --range-stop='^}' --range-invert print testfile
+    # This function calls print on "foo".
+    my $print = 1;
+    my $task = 'print';
+
+Everything else in ack works the same way.  Using C<-c> option will give a
+count of all the matches that appear within those ranges.  The C<-L> will
+show only files that do not have matches within the range, and so on.
+
+Using the context options works the same way, and will show context lines
+even if those lines fall outside the range.
