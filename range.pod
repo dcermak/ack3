@@ -33,8 +33,9 @@ a subroutine.  Simply calling C<ack print> will give us three matches:
         print 'bar';
     my $task = 'print';
 
-We can specify ranges of lines that we want ack to search.  The range starts with any line that matches the
-pattern C<^sub \w+>, and stops with any line that matches C<^}>.
+We can specify ranges of lines that we want ack to search.  The range
+starts with any line that matches the pattern C<^sub \w+>, and stops with
+any line that matches C<^}>.
 
     $ ack --range-start='^sub \w+' --range-stop='^}' print testfile
         print 'foo';
