@@ -11,7 +11,7 @@ search, and you can also specify filenames.  The C<--range-start> and
 C<--range-stop> options let you specify ranges of lines to search within
 each file.
 
-Say you had the following file:
+Say you had the following file, called F<testfile>:
 
     # This function calls print on "foo".
     sub foo {
@@ -23,8 +23,7 @@ Say you had the following file:
     }
     my $task = 'print';
 
-Say you wanted to search for the string "print", but only if it appears in
-a subroutine.  Simply calling C<ack print> will give us three matches:
+Calling C<ack print> will give us five matches:
 
     $ ack print testfile
     # This function calls print on "foo".
@@ -33,9 +32,10 @@ a subroutine.  Simply calling C<ack print> will give us three matches:
         print 'bar';
     my $task = 'print';
 
-We can specify ranges of lines that we want ack to search.  The range
-starts with any line that matches the pattern C<^sub \w+>, and stops with
-any line that matches C<^}>.
+What if we only want to search for C<print> within the subroutines?  We can
+specify ranges of lines that we want ack to search.  The range starts with
+any line that matches the pattern C<^sub \w+>, and stops with any line that
+matches C<^}>.
 
     $ ack --range-start='^sub \w+' --range-stop='^}' print testfile
         print 'foo';
