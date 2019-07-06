@@ -14,7 +14,7 @@ my $help_types_output;
 
 # sanity check
 ( $stdout, $stderr ) = run_ack_with_stderr('--perl', '-f', 't/swamp');
-is( scalar(@{$stdout}), 12, 'Found initial 11 files' );
+is( scalar(@{$stdout}), 13, 'Found initial 13 files' );
 is_empty_array( $stderr, 'Nothing in stderr' );
 
 ( $stdout, $stderr ) = run_ack_with_stderr('--type-del=perl', '--type-del=perltest', '--perl', '-f', 't/swamp');
@@ -22,7 +22,7 @@ is_empty_array( $stdout, 'Nothing in stdout' );
 first_line_like( $stderr, qr/Unknown option: perl/ );
 
 ( $stdout, $stderr ) = run_ack_with_stderr('--type-del=perl', '--type-del=perltest',  '--type-add=perl:ext:pm', '--perl', '-f', 't/swamp');
-is( scalar(@{$stdout}), 1, 'Got one output line' );
+is( scalar(@{$stdout}), 2, 'Got two output lines' );
 is_empty_array( $stderr, 'Nothing in stderr' );
 
 # more sanity checking

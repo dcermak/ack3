@@ -52,6 +52,7 @@ filter_test(
         't/swamp/perl.pm',
         't/swamp/perl.pod',
         't/swamp/pipe-stress-freaks.F',
+        't/swamp/rangefile.pm',
         't/swamp/Rakefile',
         't/swamp/Sample.ascx',
         't/swamp/Sample.asmx',

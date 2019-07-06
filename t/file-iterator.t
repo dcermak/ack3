@@ -106,6 +106,7 @@ UNFILTERED: {
             t/swamp/perltoot.jpg
             t/swamp/pipe-stress-freaks.F
             t/swamp/Rakefile
+            t/swamp/rangefile.pm
             t/swamp/Sample.ascx
             t/swamp/Sample.asmx
             t/swamp/sample.asp

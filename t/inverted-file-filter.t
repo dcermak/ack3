@@ -73,6 +73,7 @@ INCLUDE_PLUS_EXCLUDE_ONLY: {
         t/swamp/Makefile.PL
         t/swamp/perl-test.t
         t/swamp/perl.pl
+        t/swamp/rangefile.pm
     );
 
     my @args = ( '--type-add=pod:ext:pod', '--perl', '--nopod', '-f', 't/swamp' );
