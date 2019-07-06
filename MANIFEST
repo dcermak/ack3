@@ -129,6 +129,8 @@ t/etc/shebang.rb.xxx
 t/etc/shebang.sh.xxx
 
 t/home/.ackrc
+t/range/rangefile.pm
+t/range/rangefile.rb
 t/swamp/#emacs-workfile.pl#
 t/swamp/0
 t/swamp/CMakeLists.txt
@@ -207,7 +209,6 @@ t/swamp/perl.pod
 t/swamp/perl.tar.gz
 t/swamp/perltoot.jpg
 t/swamp/pipe-stress-freaks.F
-t/swamp/rangefile.pm
 t/swamp/sample.asp
 t/swamp/sample.aspx
 t/swamp/sample.rake
