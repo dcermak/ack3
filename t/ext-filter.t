@@ -22,6 +22,5 @@ filter_test(
         't/swamp/perl.pl',
         't/swamp/perl.pm',
         't/swamp/perl.pod',
-        't/swamp/rangefile.pm',
     ], 'only the given extensions should be matched'
 );

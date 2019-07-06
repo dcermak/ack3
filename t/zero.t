@@ -33,7 +33,6 @@ my @actual_swamp_perl = map { "$swamp/$_" } qw(
     perl.pod
     perl-test.t
     perl-without-extension
-    rangefile.pm
 );
 
 DASH_F: {

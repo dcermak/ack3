@@ -46,7 +46,6 @@ t/swamp/example.R
 t/swamp/fresh.css
 t/swamp/lua-shebang-test
 t/swamp/notes.md
-t/swamp/rangefile.pm
 );
 
 my @files_no_perl = qw(

@@ -56,7 +56,6 @@ DEFAULT_DIR_EXCLUSIONS: {
         t/swamp/perl.pod
         t/swamp/pipe-stress-freaks.F
         t/swamp/Rakefile
-        t/swamp/rangefile.pm
         t/swamp/Sample.ascx
         t/swamp/Sample.asmx
         t/swamp/sample.asp
@@ -91,7 +90,6 @@ COMBINED_FILTERS: {
         t/swamp/perl.handler.pod
         t/swamp/perl.pl
         t/swamp/perl.pod
-        t/swamp/rangefile.pm
     );
 
     my @args = qw( -f t/swamp --perl --rake );
