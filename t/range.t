@@ -11,6 +11,12 @@ use Barfly;
 
 prep_environment();
 
+# XXX Tests that we need
+# -c has to respect ranges.
+# -l and -L have to respect ranges.
+# -v has to respect ranges.
+# Ranges don't affect context.
+
 subtest 'No range' => sub {
     plan tests => 2;
 

@@ -336,7 +336,7 @@ FILES:
                 last FILES;
             }
         }
-    }
+    }   # while file->next
 
     if ( $opt_c && !$opt_show_filename ) {
         App::Ack::print( $total_count, "\n" );
