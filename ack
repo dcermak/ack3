@@ -143,6 +143,14 @@ MAIN: {
     $opt_underline      = $opt->{underline};
     $opt_v              = $opt->{v};
 
+
+    if ( $opt_range_start ) {
+        $opt_range_start = build_regex( $opt_range_start, $opt );
+    }
+    if ( $opt_range_end ) {
+        $opt_range_end   = build_regex( $opt_range_end, $opt );
+    }
+
     $App::Ack::report_bad_filenames = !$opt->{s};
     $App::Ack::ors = $opt->{print0} ? "\0" : "\n";
 
@@ -749,40 +757,63 @@ sub print_matches_in_file {
             last if $max_count == 0;
         }
     }
-    else {
+    else {  # Normal search: No context, no -v, no --passthru
         local $_ = undef;
 
         my $last_match_lineno;
+        my $using_ranges = $opt_range_start || $opt_range_end;
+        my $in_range = !$using_ranges || (!$opt_range_start && $opt_range_end);
+
         while ( <$fh> ) {
             chomp;
-            $match_colno = undef;
-            if ( /$opt_regex/o ) {
-                $match_colno = $-[0] + 1;
-                if ( !$has_printed_for_this_file ) {
-                    if ( $opt_break && $has_printed_something ) {
-                        App::Ack::print_blank_line();
-                    }
-                    if ( $opt_show_filename && $opt_heading ) {
-                        App::Ack::say( $display_filename );
+
+            if ( $using_ranges ) {
+                if ( !$in_range && $opt_range_start ) {
+                    if ( /$opt_range_start/o ) {
+                        $in_range = 1;
                     }
                 }
-                if ( $opt_p ) {
-                    if ( $last_match_lineno ) {
-                        if ( $. > $last_match_lineno + $opt_p ) {
+            }
+
+            if ( $in_range ) {
+                $match_colno = undef;
+                if ( /$opt_regex/o ) {
+                    $match_colno = $-[0] + 1;
+                    if ( !$has_printed_for_this_file ) {
+                        if ( $opt_break && $has_printed_something ) {
+                            App::Ack::print_blank_line();
+                        }
+                        if ( $opt_show_filename && $opt_heading ) {
+                            App::Ack::say( $display_filename );
+                        }
+                    }
+                    if ( $opt_p ) {
+                        if ( $last_match_lineno ) {
+                            if ( $. > $last_match_lineno + $opt_p ) {
+                                App::Ack::print_blank_line();
+                            }
+                        }
+                        elsif ( !$opt_break && $has_printed_something ) {
                             App::Ack::print_blank_line();
                         }
                     }
-                    elsif ( !$opt_break && $has_printed_something ) {
-                        App::Ack::print_blank_line();
+                    s/[\r\n]+$//;
+                    print_line_with_options( $filename, $_, $., ':' );
+                    $has_printed_for_this_file = 1;
+                    $nmatches++;
+                    $max_count--;
+                    $last_match_lineno = $.;
+                }
+            }
+
+            if ( $using_ranges ) {
+                if ( $in_range && $opt_range_end ) {
+                    if ( /$opt_range_end/o ) {
+                        $in_range = 0;
                     }
                 }
-                s/[\r\n]+$//;
-                print_line_with_options( $filename, $_, $., ':' );
-                $has_printed_for_this_file = 1;
-                $nmatches++;
-                $max_count--;
-                $last_match_lineno = $.;
             }
+
             last if $max_count == 0;
         }
     }
