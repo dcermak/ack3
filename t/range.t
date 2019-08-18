@@ -21,7 +21,7 @@ prep_environment();
 # Handle --range-start without --range-end, and vice versa
 
 subtest 'No range' => sub {
-    plan tests => 2;
+    plan tests => 4;
 
     my @expected = line_split( <<'HERE' );
 # This function calls print on "foo".
@@ -33,13 +33,16 @@ HERE
 
     my @args    = qw( print );
     my @results = run_ack( @args, 't/range/rangefile.pm' );
-
     lists_match( \@results, \@expected, 'No range' );
+
+    # Test -c
+    @results = run_ack( @args, '-c', 't/range/rangefile.pm' );
+    lists_match( \@results, [ scalar @expected ], '-c under simple range' );
 };
 
 
 subtest 'Simple range' => sub {
-    plan tests => 2;
+    plan tests => 4;
 
     my @expected = line_split( <<'HERE' );
     print 'foo';
@@ -48,12 +51,16 @@ HERE
 
     my @args    = qw( print --range-start=^sub --range-end=^} );
     my @results = run_ack( @args, 't/range/rangefile.pm' );
-
     lists_match( \@results, \@expected, 'Simple range' );
+
+    # Test -c
+    @results = run_ack( @args, '-c', 't/range/rangefile.pm' );
+    lists_match( \@results, [ scalar @expected ], '-c under simple range' );
 };
 
+
 subtest 'Start with no end' => sub {
-    plan tests => 2;
+    plan tests => 4;
 
     my @expected = line_split( <<'HERE' );
     print 'foo';
@@ -66,11 +73,15 @@ HERE
     my @results = run_ack( @args, 't/range/rangefile.pm' );
 
     lists_match( \@results, \@expected, 'Start with no end' );
+
+    # Test -c
+    @results = run_ack( @args, '-c', 't/range/rangefile.pm' );
+    lists_match( \@results, [ scalar @expected ], '-c under simple range' );
 };
 
 
 subtest 'End with no start' => sub {
-    plan tests => 2;
+    plan tests => 4;
 
     my @expected = line_split( <<'HERE' );
 # This function calls print on "foo".
@@ -81,6 +92,10 @@ HERE
     my @results = run_ack( @args, 't/range/rangefile.pm' );
 
     lists_match( \@results, \@expected, 'End with no start' );
+
+    # Test -c
+    @results = run_ack( @args, '-c', 't/range/rangefile.pm' );
+    lists_match( \@results, [ scalar @expected ], '-c under simple range' );
 };
 
 
