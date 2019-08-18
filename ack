@@ -1038,8 +1038,29 @@ sub count_matches_in_file {
         }
     }
     else {
+        my $using_ranges = $opt_range_start || $opt_range_end;
+        my $in_range = !$using_ranges || (!$opt_range_start && $opt_range_end);
+
         while ( <$fh> ) {
-            ++$nmatches if (/$opt_regex/o xor $opt_v);
+            if ( $using_ranges ) {
+                if ( !$in_range && $opt_range_start ) {
+                    if ( /$opt_range_start/o ) {
+                        $in_range = 1;
+                    }
+                }
+            }
+
+            if ( $in_range ) {
+                ++$nmatches if (/$opt_regex/o xor $opt_v);
+            }
+
+            if ( $using_ranges ) {
+                if ( $in_range && $opt_range_end ) {
+                    if ( /$opt_range_end/o ) {
+                        $in_range = 0;
+                    }
+                }
+            }
         }
         $file->close;
     }

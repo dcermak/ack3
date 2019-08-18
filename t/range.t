@@ -12,13 +12,14 @@ use Barfly;
 prep_environment();
 
 # XXX Tests that we need
-# -c has to respect ranges.
+# ✅ Basic ranges
+# ✅ -c has to respect ranges.
+# ✅ Handle --range-start without --range-end, and vice versa
+# The patterns in --range-start and --range-end have to follow all the flags of the original regex: -Q, -i, etc
 # -l and -L have to respect ranges.
 # -v has to respect ranges.
-# Ranges don't affect context.
-# What should --passthru do?
-# The patterns in --range-start and --range-end have to follow all the flags of the original regex: -Q, -i, etc
-# Handle --range-start without --range-end, and vice versa
+# Ranges must not affect context.
+# Disallow --range & --passthru at first
 
 subtest 'No range' => sub {
     plan tests => 4;
