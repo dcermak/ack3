@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use lib 't';
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use Util;
 use Barfly;
@@ -149,6 +149,58 @@ HERE
     lists_match( \@results, [@expected[0..1]], 'Only the first two forevers should match' );
 };
 
+
+subtest '-l, -L and -c' => sub {
+    plan tests => 6;
+
+    my @expected_c = map { reslash($_) } line_split( <<'HERE' );
+t/range/america-the-beautiful.html:2
+t/range/anchors-aweigh.html:2
+t/range/stars-and-stripes.html:2
+HERE
+
+    my @expected_l = map { /^(.+):\d/ && $1 } @expected_c;
+
+    # -l, no range
+    my @args = qw( sea -i --sort --html );
+    my @results = run_ack( @args, '-l', 't/range' );
+    lists_match( \@results, \@expected_l, 'Found the correct files' );
+
+    # -L, no range
+    @results = run_ack( @args, '-L', 't/range' );
+    lists_match( \@results, [], 'All the HTML have sea in them.' );
+
+    # -c, no range
+    @results = run_ack( @args, '-c', 't/range' );
+    lists_match( \@results, \@expected_c, 'Found the correct counts' );
+
+    # Now do it again with ranges.
+    push @args, qw( --range-start=<div\s+id="verse-1"> --range-end=/div> );
+
+    @expected_c = map { reslash($_) } line_split( <<'HERE' );
+t/range/america-the-beautiful.html:1
+t/range/anchors-aweigh.html:1
+t/range/stars-and-stripes.html:0
+HERE
+
+    @expected_l = map { /^(.+):1/ ? $1 : () } @expected_c;
+    my @expected_L = map { reslash($_) } line_split( <<'HERE' );
+t/range/stars-and-stripes.html
+HERE
+
+    # -l, in a range of verse-1 only
+    @results = run_ack( @args, '-l', 't/range' );
+    lists_match( \@results, \@expected_l, 'Found the correct files for -l range' );
+
+    # -L, in a range of verse-1 only
+    @results = run_ack( @args, '-L', 't/range' );
+    lists_match( \@results, \@expected_L, '-L with a range' );
+
+    # -c, in a range of verse-1 only
+    @results = run_ack( @args, '-c', 't/range' );
+    lists_match( \@results, \@expected_c, '-c with a range' );
+
+};
 
 done_testing();
 
