@@ -20,6 +20,7 @@ prep_environment();
 # -v has to respect ranges.
 # Ranges must not affect context.
 # --passthru doesn't affect what matches, and --range doesn't affect --passthru's behavior.
+# A range can start and end on the same line.
 
 subtest 'No range' => sub {
     plan tests => 4;

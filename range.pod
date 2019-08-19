@@ -1,15 +1,7 @@
-
-
-    --range-start=PATTERN
-    --range-stop=PATTERN
-    --range-invert
-
 =head1 RANGE SEARCHING
 
-ack's C<--type> searching lets you specify types of files you want to
-search, and you can also specify filenames.  The C<--range-start> and
-C<--range-stop> options let you specify ranges of lines to search within
-each file.
+The C<--range-start> and C<--range-stop> options let you specify ranges of
+lines to search within each file.
 
 Say you had the following file, called F<testfile>:
 
@@ -60,18 +52,23 @@ file unitl the first line that matches C<--range-stop>.  Similarly, if
 C<--range-stop> is omitted, the range runs from the first line matching
 C<--range-start> to the end of the file.
 
-You can also add the C<--range-invert> option to tell ack to search only
-lines that are B<not> in the range.  In our example above, inverting our
-range would give us this result.
+It's possible for a range to start and stop on the same line.  For example
 
-    $ ack --range-start='^sub \w+' --range-stop='^}' --range-invert print testfile
-    # This function calls print on "foo".
-    my $print = 1;
-    my $task = 'print';
+    --range-start='<title>' --range-end='</title>'
 
-Everything else in ack works the same way.  Using C<-c> option will give a
-count of all the matches that appear within those ranges.  The C<-L> will
-show only files that do not have matches within the range, and so on.
+would match this line as both the start and end of the range, making a
+one-line range.
 
-Using the context options works the same way, and will show context lines
-even if those lines fall outside the range.
+    <title>Page title</title>
+
+Again, ranges only affect where matches are looked for.  Everything else in
+ack works the same way.  Using C<-c> option with a range will give a count
+of all the matches that appear within those ranges.  The C<-l> shows those
+files that have a match within a range, and the C<-L> option shows files
+that do not have a match within a range.
+
+Specifying a range to search does not affect how matches are displayed.
+The context for a match will still be the same, and
+
+Using the context options work the same way, and will show context lines
+for matches even if the context lines fall outside the range.
