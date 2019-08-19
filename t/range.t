@@ -18,8 +18,8 @@ prep_environment();
 # ✅ The patterns in --range-start and --range-end must NOT follow the flags of the original regex: -Q, -i, etc
 # ✅ -l and -L have to respect ranges.
 # ✅ A range can start and end on the same line.
+# ✅ Ranges must not affect context.
 # -v has to respect ranges.
-# Ranges must not affect context.
 # --passthru doesn't affect what matches, and --range doesn't affect --passthru's behavior.
 
 subtest 'No range' => sub {
@@ -203,8 +203,8 @@ HERE
 
 };
 
-subtest 'One-line ranges and ranges with only start or end' => sub {
-    plan tests => 8;
+subtest 'One-line ranges and ranges with only start or end; also, check context' => sub {
+    plan tests => 10;
 
     my $start = '--range-start=<h1>';
     my $end   = '--range-end=</h1>';
@@ -234,6 +234,17 @@ HERE
     # Start and end give a one-line range.
     @results = run_ack( @args, $start, $end, 't/range' );
     lists_match( \@results, [$expected[1]], 'Start and end gives a one-line range' );
+
+    # Verify that context is not affected by the range.
+    my @expected_context = line_split( <<"HERE" );
+$leading-6-    <body>
+$leading:7:        <h1>America the Beautiful</h1>
+$leading-8-
+$leading-9-        <div id="verse-1">
+HERE
+
+    @results = run_ack( @args, $start, $end, '-B1', '-A2', 't/range' );
+    lists_match( \@results, \@expected_context, 'Start and end gives a one-line range' );
 };
 
 done_testing();

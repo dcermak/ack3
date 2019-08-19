@@ -662,21 +662,35 @@ sub print_matches_in_file {
     # Check for context before the main loop, so we don't pay for it if we don't need it.
     if ( $is_tracking_context ) {
         $after_context_pending = 0;
+        my $using_ranges = $opt_range_start || $opt_range_end;
+        my $in_range = !$using_ranges || (!$opt_range_start && $opt_range_end);
+
         while ( <$fh> ) {
             chomp;
-            my $does_match;
             $match_colno = undef;
 
-            if ( $opt_v ) {
-                $does_match = !/$opt_regex/o;
-            }
-            else {
-                if ( $does_match = /$opt_regex/o ) {
-                    # @- = @LAST_MATCH_START
-                    # @+ = @LAST_MATCH_END
-                    $match_colno = $-[0] + 1;
+            if ( $using_ranges ) {
+                if ( !$in_range && $opt_range_start ) {
+                    if ( /$opt_range_start/o ) {
+                        $in_range = 1;
+                    }
                 }
             }
+
+            my $does_match;
+            if ( $in_range ) {
+                if ( $opt_v ) {
+                    $does_match = !/$opt_regex/o;
+                }
+                else {
+                    if ( $does_match = /$opt_regex/o ) {
+                        # @- = @LAST_MATCH_START
+                        # @+ = @LAST_MATCH_END
+                        $match_colno = $-[0] + 1;
+                    }
+                }
+            }
+
             if ( $does_match && $max_count ) {
                 if ( !$has_printed_for_this_file ) {
                     if ( $opt_break && $has_printed_something ) {
@@ -702,6 +716,14 @@ sub print_matches_in_file {
                     # Save line for "before" context.
                     $before_context_buf[$before_context_pos] = $_;
                     $before_context_pos = ($before_context_pos+1) % $n_before_ctx_lines;
+                }
+            }
+
+            if ( $using_ranges ) {
+                if ( $in_range && $opt_range_end ) {
+                    if ( /$opt_range_end/o ) {
+                        $in_range = 0;
+                    }
                 }
             }
 
