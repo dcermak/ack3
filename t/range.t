@@ -16,7 +16,7 @@ prep_environment();
 # ✅ -c has to respect ranges.
 # ✅ Handle --range-start without --range-end, and vice versa
 # ✅ The patterns in --range-start and --range-end must NOT follow the flags of the original regex: -Q, -i, etc
-# -l and -L have to respect ranges.
+# ✅ -l and -L have to respect ranges.
 # -v has to respect ranges.
 # Ranges must not affect context.
 # --passthru doesn't affect what matches, and --range doesn't affect --passthru's behavior.
@@ -151,7 +151,7 @@ HERE
 
 
 subtest '-l, -L and -c' => sub {
-    plan tests => 6;
+    plan tests => 12;
 
     my @expected_c = map { reslash($_) } line_split( <<'HERE' );
 t/range/america-the-beautiful.html:2
