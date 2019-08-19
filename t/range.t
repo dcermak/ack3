@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use lib 't';
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 use Util;
 use Barfly;
@@ -17,10 +17,10 @@ prep_environment();
 # ✅ Handle --range-start without --range-end, and vice versa
 # ✅ The patterns in --range-start and --range-end must NOT follow the flags of the original regex: -Q, -i, etc
 # ✅ -l and -L have to respect ranges.
+# ✅ A range can start and end on the same line.
 # -v has to respect ranges.
 # Ranges must not affect context.
 # --passthru doesn't affect what matches, and --range doesn't affect --passthru's behavior.
-# A range can start and end on the same line.
 
 subtest 'No range' => sub {
     plan tests => 4;
@@ -201,6 +201,39 @@ HERE
     @results = run_ack( @args, '-c', 't/range' );
     lists_match( \@results, \@expected_c, '-c with a range' );
 
+};
+
+subtest 'One-line ranges and ranges with only start or end' => sub {
+    plan tests => 8;
+
+    my $start = '--range-start=<h1>';
+    my $end   = '--range-end=</h1>';
+
+    my $leading = reslash( 't/range/america-the-beautiful.html' );
+    my @expected = line_split( <<"HERE" );
+$leading:4:        <title>America the Beautiful</title>
+$leading:7:        <h1>America the Beautiful</h1>
+$leading:14:            America! America!
+$leading:25:            America! America!
+$leading:36:            America! America!
+$leading:47:            America! America!
+HERE
+
+    my @args = qw( America );
+    my @results = run_ack( @args, 't/range' );
+    lists_match( \@results, \@expected, 'No range finds them all' );
+
+    # Just a start of the range.
+    @results = run_ack( @args, $start, 't/range' );
+    lists_match( \@results, [@expected[1..5]], 'Start-only range skips the 1st hit' );
+
+    # Just an end of the range.
+    @results = run_ack( @args, $end, 't/range' );
+    lists_match( \@results, [@expected[0..1]], 'End-only range ends after the 2nd hit' );
+
+    # Start and end give a one-line range.
+    @results = run_ack( @args, $start, $end, 't/range' );
+    lists_match( \@results, [$expected[1]], 'Start and end gives a one-line range' );
 };
 
 done_testing();
