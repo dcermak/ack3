@@ -15,11 +15,11 @@ prep_environment();
 # ✅ Basic ranges
 # ✅ -c has to respect ranges.
 # ✅ Handle --range-start without --range-end, and vice versa
-# The patterns in --range-start and --range-end have to follow all the flags of the original regex: -Q, -i, etc
+# The patterns in --range-start and --range-end must NOT follow the flags of the original regex: -Q, -i, etc
 # -l and -L have to respect ranges.
 # -v has to respect ranges.
 # Ranges must not affect context.
-# Disallow --range & --passthru at first
+# --passthru doesn't affect what matches, and --range doesn't affect --passthru's behavior.
 
 subtest 'No range' => sub {
     plan tests => 4;
