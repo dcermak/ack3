@@ -132,6 +132,8 @@ t/home/.ackrc
 
 t/range/rangefile.pm
 t/range/rangefile.rb
+t/range/america-the-beautiful.html
+t/range/anchors-aweigh.html
 t/range/stars-and-stripes.html
 
 t/swamp/#emacs-workfile.pl#
