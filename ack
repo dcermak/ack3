@@ -148,10 +148,10 @@ MAIN: {
 
 
     if ( $opt_range_start ) {
-        $opt_range_start = build_regex( $opt_range_start, $opt );
+        $opt_range_start = build_regex( $opt_range_start, {} );
     }
     if ( $opt_range_end ) {
-        $opt_range_end   = build_regex( $opt_range_end, $opt );
+        $opt_range_end   = build_regex( $opt_range_end, {} );
     }
 
     $App::Ack::report_bad_filenames = !$opt->{s};
