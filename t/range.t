@@ -110,7 +110,7 @@ subtest 'Multiple tricky points: Flags' => sub {
     # * The --range-start and --range-end have metacharacters in them.
     # * Two of the <div>s have "flag"s that should not be found.
 
-    my $leading = reslash( 't/range/stars-and-stripes.html' );
+    my $leading = reslash( 't/range/stars-and-stripes-forever.html' );
     my @expected = line_split( <<"HERE" );
 $leading:14:            A flag appears 'mid thunderous cheers,
 $leading:34:            But the flag of the North and South and West
@@ -130,7 +130,7 @@ subtest 'Multiple tricky points: Forever' => sub {
     # Danger points:
     # * The range can start and stop on the same line.
 
-    my $leading = reslash( 't/range/stars-and-stripes.html' );
+    my $leading = reslash( 't/range/stars-and-stripes-forever.html' );
     my @expected = line_split( <<"HERE" );
 $leading:4:        <title>The Stars and Stripes Forever</title>
 $leading:7:        <h1>The Stars and Stripes Forever</h1>
@@ -157,7 +157,7 @@ subtest '-l, -L and -c' => sub {
     my @expected_c = map { reslash($_) } line_split( <<'HERE' );
 t/range/america-the-beautiful.html:2
 t/range/anchors-aweigh.html:2
-t/range/stars-and-stripes.html:2
+t/range/stars-and-stripes-forever.html:2
 HERE
 
     my @expected_l = map { /^(.+):\d/ && $1 } @expected_c;
@@ -181,12 +181,12 @@ HERE
     @expected_c = map { reslash($_) } line_split( <<'HERE' );
 t/range/america-the-beautiful.html:1
 t/range/anchors-aweigh.html:1
-t/range/stars-and-stripes.html:0
+t/range/stars-and-stripes-forever.html:0
 HERE
 
     @expected_l = map { /^(.+):1/ ? $1 : () } @expected_c;
     my @expected_L = map { reslash($_) } line_split( <<'HERE' );
-t/range/stars-and-stripes.html
+t/range/stars-and-stripes-forever.html
 HERE
 
     # -l, in a range of verse-1 only
