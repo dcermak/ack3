@@ -52,17 +52,16 @@ sub bar {
 1;
 HERE
 
-    my $file    = 't/range/rangefile.pm';
-    my @args    = qw( print );
-    my @results = run_ack( @args, $file );
+    my @args    = qw( print t/range/rangefile.pm );
+    my @results = run_ack( @args );
     lists_match( \@results, \@expected, 'No range' );
 
     # Test -v
-    @results = run_ack( @args, '-v', $file );
+    @results = run_ack( @args, '-v' );
     lists_match( \@results, [ @expected_v ], '-v with no range' );
 
     # Test -c
-    @results = run_ack( @args, '-c', $file );
+    @results = run_ack( @args, '-c' );
     lists_match( \@results, [ scalar @expected ], '-c with no range' );
 };
 
@@ -75,12 +74,23 @@ subtest 'Simple range' => sub {
     print 'bar';
 HERE
 
-    my @args    = qw( print --range-start=^sub --range-end=^} );
-    my @results = run_ack( @args, 't/range/rangefile.pm' );
+    my @expected_v = line_split( <<'HERE' );
+sub foo {
+}
+sub bar {
+}
+HERE
+
+    my @args    = qw( print --range-start=^sub --range-end=^} t/range/rangefile.pm );
+    my @results = run_ack( @args );
     lists_match( \@results, \@expected, 'Simple range' );
 
+    # Test -v
+    @results = run_ack( @args, '-v' );
+    lists_match( \@results, [ @expected_v ], '-v with simple range' );
+
     # Test -c
-    @results = run_ack( @args, '-c', 't/range/rangefile.pm' );
+    @results = run_ack( @args, '-c' );
     lists_match( \@results, [ scalar @expected ], '-c under simple range' );
 };
 
