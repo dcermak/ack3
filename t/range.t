@@ -43,11 +43,15 @@ use strict;
 use 5.010;
 
 sub foo {
+    return 1;
 }
 
+my $update = 5;
 
 sub bar {
+    return 2;
 }
+$update = 12;
 
 1;
 HERE
@@ -76,8 +80,10 @@ HERE
 
     my @expected_v = line_split( <<'HERE' );
 sub foo {
+    return 1;
 }
 sub bar {
+    return 2;
 }
 HERE
 
