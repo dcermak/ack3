@@ -23,7 +23,7 @@ prep_environment();
 # --passthru doesn't affect what matches, and --range doesn't affect --passthru's behavior.
 
 subtest 'No range' => sub {
-    plan tests => 4;
+    plan tests => 6;
 
     my @expected = line_split( <<'HERE' );
 # This function calls print on "foo".
@@ -33,13 +33,37 @@ my $print = 1;
 my $task = 'print';
 HERE
 
+    my @expected_v = line_split( <<'HERE' );
+package RangeFile;
+
+# For testing the range function.
+
+use warnings;
+use strict;
+use 5.010;
+
+sub foo {
+}
+
+
+sub bar {
+}
+
+1;
+HERE
+
+    my $file    = 't/range/rangefile.pm';
     my @args    = qw( print );
-    my @results = run_ack( @args, 't/range/rangefile.pm' );
+    my @results = run_ack( @args, $file );
     lists_match( \@results, \@expected, 'No range' );
 
+    # Test -v
+    @results = run_ack( @args, '-v', $file );
+    lists_match( \@results, [ @expected_v ], '-v with no range' );
+
     # Test -c
-    @results = run_ack( @args, '-c', 't/range/rangefile.pm' );
-    lists_match( \@results, [ scalar @expected ], '-c under simple range' );
+    @results = run_ack( @args, '-c', $file );
+    lists_match( \@results, [ scalar @expected ], '-c with no range' );
 };
 
 
