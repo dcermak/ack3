@@ -767,22 +767,45 @@ sub print_matches_in_file {
         local $_ = undef;
 
         $match_colno = undef;
+        my $using_ranges = $opt_range_start || $opt_range_end;
+        my $in_range = !$using_ranges || (!$opt_range_start && $opt_range_end);
+
         while ( <$fh> ) {
             chomp;
-            if ( !/$opt_regex/o ) {
-                if ( !$has_printed_for_this_file ) {
-                    if ( $opt_break && $has_printed_something ) {
-                        App::Ack::print_blank_line();
-                    }
-                    if ( $opt_show_filename && $opt_heading ) {
-                        App::Ack::say( $display_filename );
+
+            if ( $using_ranges ) {
+                if ( !$in_range && $opt_range_start ) {
+                    if ( /$opt_range_start/o ) {
+                        $in_range = 1;
                     }
                 }
-                print_line_with_context( $filename, $_, $. );
-                $has_printed_for_this_file = 1;
-                $nmatches++;
-                $max_count--;
             }
+
+            if ( $in_range ) {
+                if ( !/$opt_regex/o ) {
+                    if ( !$has_printed_for_this_file ) {
+                        if ( $opt_break && $has_printed_something ) {
+                            App::Ack::print_blank_line();
+                        }
+                        if ( $opt_show_filename && $opt_heading ) {
+                            App::Ack::say( $display_filename );
+                        }
+                    }
+                    print_line_with_context( $filename, $_, $. );
+                    $has_printed_for_this_file = 1;
+                    $nmatches++;
+                    $max_count--;
+                }
+            }
+
+            if ( $using_ranges ) {
+                if ( $in_range && $opt_range_end ) {
+                    if ( /$opt_range_end/o ) {
+                        $in_range = 0;
+                    }
+                }
+            }
+
             last if $max_count == 0;
         }
     }
