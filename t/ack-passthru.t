@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use lib 't';
 use Util;
@@ -12,6 +12,9 @@ prep_environment();
 
 my @full_speech = <DATA>;
 chomp @full_speech;
+
+my @johnny_rebeck = read_file( 't/range/johnny-rebeck.txt' );
+chomp @johnny_rebeck;
 
 subtest 'Normal' => sub {
     plan tests => 2;
@@ -30,6 +33,7 @@ HERE
     lists_match( \@results, \@expected, 'Search for war' );
 };
 
+
 subtest 'With --passthru' => sub {
     plan tests => 2;
 
@@ -40,6 +44,32 @@ subtest 'With --passthru' => sub {
     my @results = run_ack( @args, @files );
 
     lists_match( \@results, \@expected, q{Still lookin' for war, in passthru mode} );
+};
+
+
+subtest '--passthru with ranges' => sub {
+    plan tests => 4;
+
+    my @files = qw( t/range/johnny-rebeck.txt );
+    my @args = qw( Rebeck --passthru --color );
+    my @expected = color_match( qr/Rebeck/, @johnny_rebeck );
+
+    my @results = run_ack( @args, @files );
+    lists_match( \@results, \@expected, q{Searching without a range} );
+
+    my @range_expected;
+    my $nmatches = 0;
+    for my $line ( @johnny_rebeck ) {
+        if ( $line =~ /Rebeck/ ) {
+            ++$nmatches;
+            if ( $nmatches == 2 || $nmatches == 3 ) {
+                ($line) = color_match( qr/Rebeck/, $line );
+            }
+        }
+        push( @range_expected, $line );
+    }
+    @results = run_ack( @args, '--range-start=CHORUS --range-end=VERSE', @files );
+    lists_match( \@results, \@range_expected, q{Searching with a range} );
 };
 
 

@@ -133,6 +133,7 @@ t/home/.ackrc
 t/range/rangefile.pm
 t/range/america-the-beautiful.html
 t/range/anchors-aweigh.html
+t/range/johnny-rebeck.txt
 t/range/stars-and-stripes-forever.html
 
 t/swamp/#emacs-workfile.pl#
