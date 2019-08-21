@@ -47,29 +47,32 @@ subtest 'With --passthru' => sub {
 };
 
 
-subtest '--passthru with ranges' => sub {
+subtest '--passthru with/without ranges' => sub {
     plan tests => 4;
 
-    my @files = qw( t/range/johnny-rebeck.txt );
-    my @args = qw( Rebeck --passthru --color );
+    my @args = qw( Rebeck --passthru --color t/range/johnny-rebeck.txt );
     my @expected = color_match( qr/Rebeck/, @johnny_rebeck );
 
-    my @results = run_ack( @args, @files );
+    my @results = run_ack( @args );
     lists_match( \@results, \@expected, q{Searching without a range} );
 
-    my @range_expected;
-    my $nmatches = 0;
-    for my $line ( @johnny_rebeck ) {
-        if ( $line =~ /Rebeck/ ) {
-            ++$nmatches;
-            if ( $nmatches == 2 || $nmatches == 3 ) {
-                ($line) = color_match( qr/Rebeck/, $line );
+    TODO: {
+        local $TODO = 'We do not yet (and may not ever) allow --passthru and --range together';
+
+        my @range_expected;
+        my $nmatches = 0;
+        for my $line ( @johnny_rebeck ) {
+            if ( $line =~ /Rebeck/ ) {
+                ++$nmatches;
+                if ( $nmatches == 2 || $nmatches == 3 ) {
+                    ($line) = color_match( qr/Rebeck/, $line );
+                }
             }
+            push( @range_expected, $line );
         }
-        push( @range_expected, $line );
+        @results = run_ack( @args, '--range-start=CHORUS', '--range-end=VERSE' );
+        lists_match( \@results, \@range_expected, q{Searching with a range} );
     }
-    @results = run_ack( @args, '--range-start=CHORUS --range-end=VERSE', @files );
-    lists_match( \@results, \@range_expected, q{Searching with a range} );
 };
 
 
